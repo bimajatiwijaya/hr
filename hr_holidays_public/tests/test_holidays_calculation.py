@@ -12,7 +12,7 @@ class TestHolidaysComputeDaysBase(common.SavepointCase):
     @classmethod
     def setUpClass(cls):
         super(TestHolidaysComputeDaysBase, cls).setUpClass()
-        cls.HrHolidays = cls.env['hr.holidays']
+        cls.HrHolidays = cls.env['hr.leave']
         cls.HrHolidaysPublic = cls.env["hr.holidays.public"]
         # Remove timezone for controlling data better
         cls.env.user.tz = False
@@ -81,11 +81,11 @@ class TestHolidaysComputeDaysBase(common.SavepointCase):
                 }),
             ],
         })
-        cls.holiday_type = cls.env['hr.holidays.status'].create({
+        cls.holiday_type = cls.env['hr.leave.type'].create({
             'name': 'Leave Type Test',
             'exclude_public_holidays': True,
         })
-        cls.holiday_type_no_excludes = cls.env['hr.holidays.status'].create({
+        cls.holiday_type_no_excludes = cls.env['hr.leave.type'].create({
             'name': 'Leave Type Test Without excludes',
             'exclude_public_holidays': False,
         })
@@ -100,7 +100,7 @@ class TestHolidaysComputeDays(TestHolidaysComputeDaysBase):
             'employee_id': self.employee_1.id,
         })
         holidays._onchange_data_hr_holidays_public()
-        self.assertEqual(holidays.number_of_days_temp, 4)
+        self.assertEqual(holidays.number_of_days, 4)
 
     def _test_number_days_excluding_employee_2(self):
         holidays = self.HrHolidays.new({
@@ -110,7 +110,7 @@ class TestHolidaysComputeDays(TestHolidaysComputeDaysBase):
             'employee_id': self.employee_2.id,
         })
         holidays._onchange_data_hr_holidays_public()
-        self.assertEqual(holidays.number_of_days_temp, 2)
+        self.assertEqual(holidays.number_of_days, 2)
 
     def test_number_days_not_excluding(self):
         holidays = self.HrHolidays.new({
@@ -120,4 +120,4 @@ class TestHolidaysComputeDays(TestHolidaysComputeDaysBase):
             'employee_id': self.employee_1.id,
         })
         holidays._onchange_data_hr_holidays_public()
-        self.assertEqual(holidays.number_of_days_temp, 5)
+        self.assertEqual(holidays.number_of_days, 5)
